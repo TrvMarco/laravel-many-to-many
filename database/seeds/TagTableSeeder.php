@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use App\Tag;
+use Illuminate\Support\Str;
 
-class TagSeeder extends Seeder
+class TagTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,7 +18,7 @@ class TagSeeder extends Seeder
         foreach($tags as $tag){
             $newTag = new Tag();
             $newTag->name = $tag;
-            $newTag->slug = Str::of($tag)->slug('-');
+            $newTag->slug = Str::of($newTag->name)->slug('-');
             $newTag->save();
         }
     }

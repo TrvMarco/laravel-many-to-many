@@ -57,12 +57,12 @@ class PostController extends Controller
         $newPost->fill($data);
         $newPost->slug = Str::of($data['title'])->slug('-');  
         $newPost->published = isset($data['published']);
+        $newPost->save();
 
         if(isset($data['tags'])){
             $newPost->tags()->sync($data['tags']);
         }
         
-        $newPost->save();
 
         return redirect()->route('admin.posts.show', $newPost->id);
     }
