@@ -87,7 +87,13 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post', 'categories'));
+        $tags = Tag::all();
+
+        $postTags = $post->tags->map(function ($item) { 
+            return $item->id;
+        })->toArray();
+
+        return view('admin.posts.edit', compact('post', 'categories', 'tags','postTags'));
     }
 
     /**
@@ -103,10 +109,21 @@ class PostController extends Controller
             'title' => 'required|string||max:200',
             'content' => 'required|string',
             'published' => 'sometimes|accepted',
-            'category_id' => 'nullable|exists:categories,id'
+            'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|exists:tags,id'
         ]);
 
+        $data = $request->all();
+
+        if($post->title != $data['title']){
+            $post->slug = $this-> Str::of($data['title'])->slug('-');
+        }
+
+        $post->fill($data);
+
+        $post->tags()->sync($post['tags']);
         $post->update($request->all());
+        
 
         return redirect()->route('admin.posts.show', $post);
     }
